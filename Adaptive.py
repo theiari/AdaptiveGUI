@@ -177,7 +177,7 @@ class InstancePlanningPage(tk.Frame):
             try:
            
                 text_file = open(filename, "x") #the file will be saved as a .txt file, this will need to be changed depending on file extension type
-                text_file.write(inputtxt.get(1.0, END)) #the file is saved in the current folder
+                text_file.write(inputtxt.get("1.0", "end-1c").strip()) #the file is saved in the current folder
                 text_file.close()
                 inputtxt.delete(0.0, END) #textbox is now blank
            #info_window = tk.Toplevel()
@@ -313,7 +313,7 @@ class StochasticPolicyPage(tk.Frame):
             try:
            
                 text_file = open(filename, "x") #the file will be saved as a .txt file, this will need to be changed depending on file extension type
-                text_file.write(inputtxt.get(1.0, END)) #the file is saved in the current folder
+                text_file.write(inputtxt.get("1.0", "end-1c").strip()) #the file is saved in the current folder
                 text_file.close()
                 inputtxt.delete(0.0, END) #textbox is now blank
            #info_window = tk.Toplevel()
@@ -430,7 +430,7 @@ class StochasticConstraintsBasedPolicy(tk.Frame):
             try:
            
                 text_file = open(filename, "x") #the file will be saved as a .txt file, this will need to be changed depending on file extension type
-                text_file.write(inputtxt.get(1.0, END)) #the file is saved in the current folder
+                text_file.write(inputtxt.get("1.0", "end-1c").strip()) #the file is saved in the current folder
                 text_file.close()
                 inputtxt.delete(0.0, END) #textbox is now blank
            #info_window = tk.Toplevel()
