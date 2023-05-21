@@ -1,6 +1,6 @@
 from tkinter import ttk
 import tkinter as tk
-from TestPageProva import ServiceStatePage
+from ServiceStatePageClass import ServiceStatePage
 from RunTimePageClass import RunTimePage
 from InstancePlanningPageClass import InstancePlanningPage
 from StochasticPolicyPage import StochasticPolicyPage
@@ -11,7 +11,6 @@ from tkinter import END
 import tkinter.messagebox as msgbox
 import os
 import tkinter.font as font
-
 #import TestPage
 
 LARGEFONT =("Verdana", 28)
@@ -38,11 +37,13 @@ class tkinterApp(tk.Tk):
          
         # creating a container
         self.geometry("1920x1080")
-        container = tk.Frame(self, height=1080, width=1920) 
+        container = tk.Frame(self)
         self.title("Adaptive Software")
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
         
         #container.grid(side = "top", fill = "both", expand = True)
-        container.grid(row=1, column=0, sticky= "nsew")
+        container.grid(row=0, column=0, sticky= "nsew")
         container.grid_rowconfigure(0, weight = 1)
         container.grid_columnconfigure(0, weight = 1)
   
@@ -59,9 +60,9 @@ class tkinterApp(tk.Tk):
             # startpage, page1, page2 respectively with
             # for loop
             self.frames[F] = frame
-            frame.grid(row = 0, column = 0, sticky ="nsew", padx= 150)
+            frame.grid(row = 0, column = 0, sticky ="nsew")
         
-        self.show_frame(StartPage)
+        self.show_frame(ServiceStatePage)
         
  
     # to display the current frame passed as
@@ -83,41 +84,45 @@ class StartPage(tk.Frame):
 
         
         tk.Frame.__init__(self, parent)
+        self.grid_columnconfigure(0, weight=1)
         self.option_add("*Font","aerial") #change font size 
         style = ttk.Style()
         style.configure('CustomButton.TButton', font=('Arial', 18)) 
        
     
         # label of frame Layout 2
-        label = ttk.Label(self, text ="Adaptive 0.1", font = LARGEFONT)
+        label = ttk.Label(self, text ="Adaptive 0.2", font = LARGEFONT)
          
         # putting the grid in its place by using
         # grid
-        label.grid(row = 0, column =0, padx = 10, pady = 10, sticky= "nsew")
+        label.grid(row = 0, column =0, padx = 10, pady = 10)
   
         button1 = ttk.Button(self, text ="Instance planning",
         command = lambda : controller.checkRadio(InstancePlanningPage,selected_value),
-        style='CustomButton.TButton'
+        style='CustomButton.TButton',
+        width= 30
         )
         #print(str(button1.winfo_reqwidth()))
         # putting the button in its place by
         # using grid
-        button1.grid(row = 1, column = 0, padx = 10, pady = 10, sticky= "nsew")
+        button1.grid(row = 1, column = 0, padx = 10, pady = 10)
   
         ## button to show frame 2 with text layout2
         button2 = ttk.Button(self, text ="Stochastic policy",
-        command = lambda : controller.checkRadio(InstancePlanningPage,selected_value),
-        style='CustomButton.TButton')
+        command = lambda : controller.checkRadio(StochasticPolicyPage,selected_value),
+        style='CustomButton.TButton',
+        width= 30)
      
         # putting the button in its place by
         # using grid
-        button2.grid(row = 2, column = 0, padx = 10, pady = 10, sticky= "nsew")
+        button2.grid(row = 2, column = 0, padx = 10, pady = 10)
   
         button3 = ttk.Button(self, text ="Stochastic constraint-based policy",
-        command = lambda : controller.checkRadio(InstancePlanningPage,selected_value),
-        style='CustomButton.TButton')
+        command = lambda : controller.checkRadio(StochasticConstraintsBasedPolicy,selected_value),
+        style='CustomButton.TButton',
+        width= 30)
 
-        button3.grid(row = 3, column = 0, padx = 10, pady = 10, sticky= "nsew")
+        button3.grid(row = 3, column = 0, padx = 10, pady = 10)
 
         selected_value = tk.IntVar()
         style.configure('TRadiobutton', font=('Arial', 21)) 
@@ -128,7 +133,7 @@ class StartPage(tk.Frame):
             variable=selected_value,
             style= 'TRadiobutton'
         )  
-        designTime.grid(row = 4, column = 0, padx = 5, sticky= "nsew")
+        designTime.grid(row = 4, column = 0, padx = 5)
         
         designTime.invoke() #highlights the first radio button, without it there would be the two buttons blank
 
@@ -139,7 +144,7 @@ class StartPage(tk.Frame):
             variable=selected_value,
             
         )
-        runTime.grid(row = 5, column = 0, padx = 5, sticky= "nsew")
+        runTime.grid(row = 5, column = 0, padx = 5)
     
 
         label1 = ttk.Label(self, textvariable = selected_value)

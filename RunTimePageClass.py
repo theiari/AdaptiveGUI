@@ -8,9 +8,7 @@ LARGEFONT = ("Verdana", 24)
 
 
 class RunTimePage(tk.Frame):
-     
     
-
     def __init__(self, parent, controller):
         
         style = ttk.Style()
@@ -40,12 +38,13 @@ class RunTimePage(tk.Frame):
             listBox.column( "#2", anchor= "center", width = 200)
             listBox.heading("#2", text="Validity")
         tk.Frame.__init__(self, parent)
+        self.grid_columnconfigure(0, weight=1)
         
-        label = ttk.Label(self, text ="Instance planning RUNTIME", font = LARGEFONT)
+        label = ttk.Label(self, text ="RUNTIME phase", font = LARGEFONT)
         label.grid(row = 0, padx = 10, pady = 10)
         buttonFrame = tk.Frame(self)
         
-        self.configure(width= 1920, padx= 500, height= 1080)
+        #self.configure(width= 1920, height= 1080)
         servicesLabel = ttk.Label (self, text = "SERVICES:")
         targetsLabel = ttk.Label ( self, text= "TARGETS:")
         #frame.grid(row = 5, column= 0)

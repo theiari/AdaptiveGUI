@@ -10,6 +10,7 @@ class InstancePlanningPage(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        self.grid_columnconfigure(0, weight=1)
         style = ttk.Style()
         style.configure('CustomButton.TButton', font=('Arial', 19)) 
 
@@ -134,11 +135,11 @@ class InstancePlanningPage(tk.Frame):
         topFrame = tk.Frame(self, width = 200 , height= 30)
         topFrame.grid(row = 0, column= 0 )
         #frame placed in the centre of the window
-        centerFrame = tk.Frame(self,  highlightbackground= 'black', width = 200 , height= 200, padx=10)
+        centerFrame = tk.Frame(self,  highlightbackground= 'black', width = 200 , height= 200)
         centerFrame.grid(row = 1, column= 0 )
         #frame placed in the right side of the window
-        rightFrame = tk.Frame(self, width = 100 , height= 100, padx=30)
-        rightFrame.grid(row = 1, column= 6)
+        rightFrame = tk.Frame(self, width = 100 , height= 100, padx= 50, pady= 50)
+        rightFrame.grid(row = 1, column= 1)
         #frame palced at the bottom of the window
         bottomFrame = tk.Frame(self, width = 200 , height= 200)
         bottomFrame.grid(row = 8, column= 0 )
@@ -165,9 +166,9 @@ class InstancePlanningPage(tk.Frame):
         label = ttk.Label(centerFrame, text ="Instance Planning Design Time", font = LARGEFONT)
         label.grid(row = 0, column = 0)
 
-        listBox = tk.Listbox(rightFrame, width= 40, height= 25, font= ('arial',14))
+        listBox = tk.Listbox(rightFrame, width= 30, height= 25, font= ('arial',14))
         refreshListBox()
-        listBox.grid(row= 1, column= 0)
+        listBox.grid(row= 0, column= 0)
 
         loadedFileLabel = ttk.Label(rightFrame, text='here is the list of all loaded files: \n')
         #loadedFileLabel.grid(row = 1, column= 5, padx= 10)
@@ -182,8 +183,8 @@ class InstancePlanningPage(tk.Frame):
 
 
         inputtxt = tk.Text(centerFrame,
-                height = 35,
-                width = 110,
+                height = 38,
+                width = 115,
                 
                 )
         inputtxt.grid(row = 1 , column= 0 )
