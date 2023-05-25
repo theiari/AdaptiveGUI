@@ -3,13 +3,35 @@ from tkinter import ttk
 import os
 from tkinter import END
 from tkinter import messagebox as msgbox
-
+from tkinter import filedialog
 
 LARGEFONT = ("Verdana", 24)
-class StochasticConstraintsBasedPolicy(tk.Frame):
 
+
+
+class StochasticConstraintsBasedPolicy(tk.Frame):
+    
+    path = ''
+    listBox : tk.Listbox 
+
+    def refreshListBox(self): #very ugly way to update items in the listbox
+        #path = str('./' + str(loadFile())) #TODO right now it crashes and it loads at the very begin with no apparent reason
+        file_list = [file for file in os.listdir(self.path) if file.endswith(".sdl") or file.endswith(".tdl")]
+        self.listBox.delete(0, END)
+            
+        for file in file_list:
+                self.listBox.insert(END,str(file))
+    
+    def emptyListBox(self):
+        self.listBox.delete(0, END) #this ensures that the listbox will be empty every time the frame is loaded, before choosing the new directory
     def __init__(self, parent, controller):
+        
+        
+
         tk.Frame.__init__(self, parent)
+        
+    
+
         self.grid_columnconfigure(0, weight=1)
         style = ttk.Style()
         style.configure('CustomButton.TButton', font=('Arial', 19)) 
@@ -19,18 +41,20 @@ class StochasticConstraintsBasedPolicy(tk.Frame):
         tdl_list = [file for file in os.listdir("./templates") if file.endswith(".tdl")]
         def reset():
             inputtxt.delete(1.0, END)
+            self.listBox.delete(0, END)
             #loadedFileLabel.config(text = "here is the list of all loaded files: \n")
         
         def refreshListBox(): #very ugly way to update items in the listbox
-            file_list = [file for file in os.listdir("./saved_models") if file.endswith(".sdl") or file.endswith(".tdl")]
-            listBox.delete(0, END)
+            #path = str('./' + str(loadFile())) #TODO right now it crashes and it loads at the very begin with no apparent reason
+            file_list = [file for file in os.listdir(self.path) if file.endswith(".sdl") or file.endswith(".tdl")]
+            self.listBox.delete(0, END)
             
             for file in file_list:
-                listBox.insert(END,str(file))
+                self.listBox.insert(END,str(file))
        
         def delete_item(): #function called by button DELETE
-            selected_index = listBox.curselection()
-            selected_value = listBox.get(selected_index)
+            selected_index = self.listBox.curselection()
+            selected_value = self.listBox.get(selected_index)
             subfolder = "saved_models"
             file_path = os.path.join(subfolder, selected_value)
             if selected_index:
@@ -40,15 +64,15 @@ class StochasticConstraintsBasedPolicy(tk.Frame):
                    file_list.remove(selected_value)
                    os.remove(str(file_path))
                    msgbox.showinfo("all gone"," File "+selected_value+ "has been deleted")
-                   listBox.delete(selected_index)
+                   self.listBox.delete(selected_index)
                    reset()
                    refreshListBox()
                 
 
         def showFile(): #action of button LOAD
             inputtxt.delete(1.0, END) #first we clean the textbox
-            selected_index = listBox.curselection()
-            selected_value = listBox.get(selected_index)
+            selected_index = self.listBox.curselection()
+            selected_value = self.listBox.get(selected_index)
             subfolder = "saved_models"
             file_path = os.path.join(subfolder, selected_value)
             with open(str(file_path), "r") as file:
@@ -122,7 +146,7 @@ class StochasticConstraintsBasedPolicy(tk.Frame):
             except Exception as e:
                 msgbox.showerror("error", "an error occurred!"+str(e))    
            
-            refreshListBox()
+            #refreshListBox(self.path)
 
         def goHome():
             reset()
@@ -130,7 +154,7 @@ class StochasticConstraintsBasedPolicy(tk.Frame):
             
 
         # FRAME DECLARATION & GRID
-        
+       
         #frame placed in the top side of the window
         topFrame = tk.Frame(self, width = 200 , height= 30)
         topFrame.grid(row = 0, column= 0 )
@@ -163,12 +187,22 @@ class StochasticConstraintsBasedPolicy(tk.Frame):
 
         loadButton = ttk.Button(buttonsFrame, text="load", command= showFile ,style= 'CustomButton.TButton')
         loadButton.grid(column=1, row=0, padx = 8, pady = 3)
-        label = ttk.Label(centerFrame, text ="Stochastic Constraints-based Policy Design Time", font = LARGEFONT)
+        label = ttk.Label(centerFrame, text ="Stochastic Constraints-Based Design Time", font = LARGEFONT)
         label.grid(row = 0, column = 0)
 
-        listBox = tk.Listbox(rightFrame, width= 30, height= 25, font= ('arial',14))
-        refreshListBox()
-        listBox.grid(row= 0, column= 0)
+        self.listBox = tk.Listbox(rightFrame, width= 30, height= 25, font= ('arial',14))
+         #select the file from os explorer and return its directory as string type, PROBABLY NOT USEFUL, BUT I KEEP IT HERE FOR NOW
+        #global file
+        #file = filedialog.askdirectory(
+        #title='Select the file', #name of the tab
+        #initialdir="C:/Users/anton/OneDrive/Documenti/Software Engineering/Fellowship/Adaptive", #initial shown directory
+        #    )
+        #self.path = file
+        #print(str(self.path))
+
+        #refreshListBox("./templates")
+        print("siamo nell instance planning, path vale proprio: " + str(self.path))
+        self.listBox.grid(row= 0, column= 0)
 
         loadedFileLabel = ttk.Label(rightFrame, text='here is the list of all loaded files: \n')
         #loadedFileLabel.grid(row = 1, column= 5, padx= 10)
@@ -180,7 +214,7 @@ class StochasticConstraintsBasedPolicy(tk.Frame):
 
         modelTargetButton =  ttk.Button(topFrame, text = " Target Template ", command= loadTDLFiles, style= 'CustomButton.TButton')    
         modelTargetButton.grid(row = 1, column = 1, pady= 5)
-
+        
 
         inputtxt = tk.Text(centerFrame,
                 height = 38,
@@ -190,3 +224,5 @@ class StochasticConstraintsBasedPolicy(tk.Frame):
         inputtxt.grid(row = 1 , column= 0 )
         global dynamicLabel 
         dynamicLabel = ttk.Label(rightFrame, text = "select some files" ) #this label shows the directory of the selected file
+
+

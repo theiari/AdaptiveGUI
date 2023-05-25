@@ -11,6 +11,7 @@ from tkinter import END
 import tkinter.messagebox as msgbox
 import os
 import tkinter.font as font
+import InstancePlanningPageClass
 #import TestPage
 
 LARGEFONT =("Verdana", 28)
@@ -19,7 +20,7 @@ LARGEFONT =("Verdana", 28)
 class tkinterApp(tk.Tk):
     
     #This method check the selected radio button and call showframe function
-    def checkRadio(self, temp, radioStatus):
+    def checkRadio(self, temp , radioStatus):
         # if temp == Page1 and radioStatus.get()== 1:
         #    self.show_frame(Page1)
         # if temp == Page1 and radioStatus.get() == 2:
@@ -27,7 +28,22 @@ class tkinterApp(tk.Tk):
         if radioStatus.get() == 2: #if RunTime RadioButton has been selected 
             self.show_frame(RunTimePage) #tell show_frame to load runTimePage
         else:                       #nothing fancy to see here
+        
             self.show_frame(temp) 
+            global file
+            file = filedialog.askdirectory(
+            title='Select the file', #name of the tab
+            initialdir="C:/Users/anton/OneDrive/Documenti/Software Engineering/Fellowship/Adaptive", #initial shown directory
+            )
+            
+            temp = self.getFrame(temp) #retrive the frame instance, otherwise it uses the generic class 
+            print(temp.path)
+            temp.path = str(file)
+            print(temp.path)
+            temp.refreshListBox()
+            #temp.loadPath()
+            #print ( "debug = "+ str(temp.path))
+            
 
     # __init__ function for class tkinterApp
     def __init__(self, *args, **kwargs):
@@ -62,7 +78,7 @@ class tkinterApp(tk.Tk):
             self.frames[F] = frame
             frame.grid(row = 0, column = 0, sticky ="nsew")
         
-        self.show_frame(ServiceStatePage)
+        self.show_frame(StartPage) #THIS CALL WILL LOAD THE FIRST PAGE, IT ACCEPTS THIS CLASSES : StartPage, InstancePlanningPage, StochasticPolicyPage, StochasticConstraintsBasedPolicy, RunTimePage, ServiceStatePage)
         
  
     # to display the current frame passed as
@@ -70,7 +86,10 @@ class tkinterApp(tk.Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
-        
+    
+    def getFrame(self, cont):
+        return self.frames[cont]
+    
     def show_mainPage(self):
         frame = self.frames[StartPage] 
         frame.tkraise()
