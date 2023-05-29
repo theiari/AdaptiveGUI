@@ -11,7 +11,10 @@ from tkinter import END
 import tkinter.messagebox as msgbox
 import os
 import tkinter.font as font
-import InstancePlanningPageClass
+import json
+import tkinter as tk
+
+
 #import TestPage
 
 LARGEFONT =("Verdana", 28)
@@ -19,8 +22,17 @@ LARGEFONT =("Verdana", 28)
 
 class tkinterApp(tk.Tk):
     
+    #JSON stuff
+    service_map = {} #services map of JSON file, is a map/dictionary <Key,Value> ==> <service.nome_file,[service.x, service.y, service.label], for all service in services. Pure projectual choice, I guess it could be approached differently...
+    matrix = [] #is a vector with two elements [number_of_rows, number_of_columns]
+    image_path= ''
+    folder = '' #is the folder used to load all the .sdl and .tdl files, in runtimepage ( BEFORE entering in the ServiceStatePage)
+   
+    
+
+
     #This method check the selected radio button and call showframe function
-    def checkRadio(self, temp , radioStatus):
+    def checkRadio(self, temp , radioStatus,controller):
         # if temp == Page1 and radioStatus.get()== 1:
         #    self.show_frame(Page1)
         # if temp == Page1 and radioStatus.get() == 2:
@@ -32,15 +44,17 @@ class tkinterApp(tk.Tk):
             self.show_frame(temp) 
             global file
             file = filedialog.askdirectory(
-            title='Select the file', #name of the tab
-            initialdir="C:/Users/anton/OneDrive/Documenti/Software Engineering/Fellowship/Adaptive", #initial shown directory
-            )
+            title='Select the folder', #name of the tab
+            initialdir="./  ", #initial shown directory
+                )
+            
+    
             
             temp = self.getFrame(temp) #retrive the frame instance, otherwise it uses the generic class 
             print(temp.path)
             temp.path = str(file)
             print(temp.path)
-            temp.refreshListBox()
+            temp.refreshListBox(controller)
             #temp.loadPath()
             #print ( "debug = "+ str(temp.path))
             
@@ -87,6 +101,8 @@ class tkinterApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
     
+
+    #getter for JSON attributes
     def getFrame(self, cont):
         return self.frames[cont]
     
@@ -96,10 +112,63 @@ class tkinterApp(tk.Tk):
     def show_testPage(self):
         frame = self.frames[ServiceStatePage] 
         frame.tkraise()
+    
+    def getMatrix(self):
+        return self.matrix
+    
+    def getImage_path(self):
+        return self.image_path
+    
+    def getFolder(self):
+        return self.folder
+
+    def getServicesMap(self):
+        return self.service_map
+
+
+
+
+
+    def loadJson(self):
+        # Read the JSON file
+        with open('config_layout.json') as json_file:
+            data = json.load(json_file)
+    
+    
+        # JSON attributes loading
+        services = data['services']
+        self.image_path = data['image_path']
+        self.folder = data['folder']
+        
+        self.matrix = [data['matrix'][key] for key in ['rows', 'columns']]
+
+        print( "this is the matrix: ")
+        print(self.matrix)
+       
+
+        # Iterate over the services and extract relevant information
+        for service in services:
+            
+            nome_file = service['nome_file']
+            x=  service['x']
+            y = service['y']
+            label = service['label']
+            # Create a """map""" to store the service information
+            #self.service_map[nome_file] = (x,y,label)    #use this one OR the one below
+
+            #ALTERNATIVE SERVICE MAP KEY_VALUE PAIR
+            self.service_map[label] = (x,y,nome_file)
+
+
+        # Print the collection of services DEBUG
+        #print(self.service_map)
+        
+
+
 # first window frame startpage  --START PAGE--
   
 class StartPage(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller : tkinterApp):
 
         
         tk.Frame.__init__(self, parent)
@@ -107,7 +176,7 @@ class StartPage(tk.Frame):
         self.option_add("*Font","aerial") #change font size 
         style = ttk.Style()
         style.configure('CustomButton.TButton', font=('Arial', 18)) 
-       
+        controller.loadJson()
     
         # label of frame Layout 2
         label = ttk.Label(self, text ="Adaptive 0.2", font = LARGEFONT)
@@ -117,7 +186,7 @@ class StartPage(tk.Frame):
         label.grid(row = 0, column =0, padx = 10, pady = 10)
   
         button1 = ttk.Button(self, text ="Instance planning",
-        command = lambda : controller.checkRadio(InstancePlanningPage,selected_value),
+        command = lambda : controller.checkRadio(InstancePlanningPage,selected_value, controller),
         style='CustomButton.TButton',
         width= 30
         )
@@ -128,7 +197,7 @@ class StartPage(tk.Frame):
   
         ## button to show frame 2 with text layout2
         button2 = ttk.Button(self, text ="Stochastic policy",
-        command = lambda : controller.checkRadio(StochasticPolicyPage,selected_value),
+        command = lambda : controller.checkRadio(StochasticPolicyPage,selected_value, controller),
         style='CustomButton.TButton',
         width= 30)
      
@@ -137,7 +206,7 @@ class StartPage(tk.Frame):
         button2.grid(row = 2, column = 0, padx = 10, pady = 10)
   
         button3 = ttk.Button(self, text ="Stochastic constraint-based policy",
-        command = lambda : controller.checkRadio(StochasticConstraintsBasedPolicy,selected_value),
+        command = lambda : controller.checkRadio(StochasticConstraintsBasedPolicy,selected_value, controller),
         style='CustomButton.TButton',
         width= 30)
 

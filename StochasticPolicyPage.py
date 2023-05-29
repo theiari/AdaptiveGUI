@@ -14,12 +14,16 @@ class StochasticPolicyPage(tk.Frame):
     path = ''
     listBox : tk.Listbox 
 
-    def refreshListBox(self): #very ugly way to update items in the listbox
-        #path = str('./' + str(loadFile())) #TODO right now it crashes and it loads at the very begin with no apparent reason
-        file_list = [file for file in os.listdir(self.path) if file.endswith(".sdl") or file.endswith(".tdl")]
-        self.listBox.delete(0, END)
+    def refreshListBox(self, controller): #very ugly way to update items in the listbox
+        if self.path == '':
+                msgbox.showerror("error", "Please select a valid path!\n")
+                controller.show_mainPage()
+
+        else:
+            file_list = [file for file in os.listdir(self.path) if file.endswith(".sdl") or file.endswith(".tdl")]
+            self.listBox.delete(0, END)
             
-        for file in file_list:
+            for file in file_list:
                 self.listBox.insert(END,str(file))
     
     def emptyListBox(self):
@@ -44,7 +48,7 @@ class StochasticPolicyPage(tk.Frame):
             self.listBox.delete(0, END)
             #loadedFileLabel.config(text = "here is the list of all loaded files: \n")
         
-        def refreshListBox(): #very ugly way to update items in the listbox
+        def refreshListBox(controller): #very ugly way to update items in the listbox
             #path = str('./' + str(loadFile())) #TODO right now it crashes and it loads at the very begin with no apparent reason
             file_list = [file for file in os.listdir(self.path) if file.endswith(".sdl") or file.endswith(".tdl")]
             self.listBox.delete(0, END)
@@ -66,7 +70,7 @@ class StochasticPolicyPage(tk.Frame):
                    msgbox.showinfo("all gone"," File "+selected_value+ "has been deleted")
                    self.listBox.delete(selected_index)
                    reset()
-                   refreshListBox()
+                   refreshListBox(controller)
                 
 
         def showFile(): #action of button LOAD
@@ -79,7 +83,7 @@ class StochasticPolicyPage(tk.Frame):
                 inputtxt.insert(1.0,str(file.read()))
 
         def loadSDLFiles():
-            reset()
+            inputtxt.delete(1.0, END)
             for file in sdl_list:
                 subfolder = "templates"
                 file_path = os.path.join(subfolder, str(file))
@@ -87,7 +91,7 @@ class StochasticPolicyPage(tk.Frame):
                         inputtxt.insert(END,str(file.read()+ '\n')) #A NEWLINE IS INSERTED FOR EVERY NEW LOADED FILE
 
         def loadTDLFiles():
-            reset()
+            inputtxt.delete(1.0, END)
             for file in tdl_list:
                 subfolder = "templates"
                 file_path = os.path.join(subfolder, str(file))
@@ -98,7 +102,7 @@ class StochasticPolicyPage(tk.Frame):
                 info_window = tk.Toplevel()
                 info_window.grab_set()
                 info_window.title("Save the model")
-                info_window.geometry("1280x720")
+                info_window.geometry("600x120")
                 info_label = tk.Label(info_window, text="Please, select a name for the file", font= ('arial',18) )
                 info_label.grid(row=0, column=0)
                 boolean = tk.IntVar()
@@ -146,13 +150,14 @@ class StochasticPolicyPage(tk.Frame):
             except Exception as e:
                 msgbox.showerror("error", "an error occurred!"+str(e))    
            
-            #refreshListBox(self.path)
+            refreshListBox(self.path)
 
         def goHome():
             reset()
             controller.show_mainPage()
             
-
+        def wipeText():
+             inputtxt.delete(1, END)
         # FRAME DECLARATION & GRID
        
         #frame placed in the top side of the window
@@ -174,7 +179,7 @@ class StochasticPolicyPage(tk.Frame):
 
         #LABEL & BUTTON DECLARATION & GRID 
  
-        resetButton = ttk.Button(bottomFrame, text="RESET", command= reset , style= 'CustomButton.TButton') #function to redet the whole design window, has not be implemented yet // TODO
+        resetButton = ttk.Button(bottomFrame, text="RESET", command= wipeText , style= 'CustomButton.TButton') #function to redet the whole design window, has not be implemented yet // TODO
         resetButton.grid(column=0, row=0, padx = 3, pady = 3)
  
         #model button should load the file
@@ -201,7 +206,7 @@ class StochasticPolicyPage(tk.Frame):
         #print(str(self.path))
 
         #refreshListBox("./templates")
-        print("siamo nell instance planning, path vale proprio: " + str(self.path))
+       
         self.listBox.grid(row= 0, column= 0)
 
         loadedFileLabel = ttk.Label(rightFrame, text='here is the list of all loaded files: \n')
