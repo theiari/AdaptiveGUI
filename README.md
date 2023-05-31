@@ -11,4 +11,5 @@ Install necessary packages:
 apt-get install python3-tk
 apt-get install python3-pil.imagetk
 pip install tk
+pip install pillow
 ```
