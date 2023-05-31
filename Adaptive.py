@@ -27,37 +27,6 @@ class tkinterApp(tk.Tk):
     matrix = [] #is a vector with two elements [number_of_rows, number_of_columns]
     image_path= ''
     folder = '' #is the folder used to load all the .sdl and .tdl files, in runtimepage ( BEFORE entering in the ServiceStatePage)
-   
-    
-
-
-    #This method check the selected radio button and call showframe function
-    def checkRadio(self, temp , radioStatus,controller):
-        # if temp == Page1 and radioStatus.get()== 1:
-        #    self.show_frame(Page1)
-        # if temp == Page1 and radioStatus.get() == 2:
-        #    self.show_frame(RunTimePage) 
-        if radioStatus.get() == 2: #if RunTime RadioButton has been selected 
-            self.show_frame(RunTimePage) #tell show_frame to load runTimePage
-        else:                       #nothing fancy to see here
-        
-            self.show_frame(temp) 
-            global file
-            file = filedialog.askdirectory(
-            title='Select the folder', #name of the tab
-            initialdir="./  ", #initial shown directory
-                )
-            
-    
-            
-            temp = self.getFrame(temp) #retrive the frame instance, otherwise it uses the generic class 
-            print(temp.path)
-            temp.path = str(file)
-            print(temp.path)
-            temp.refreshListBox(controller)
-            #temp.loadPath()
-            #print ( "debug = "+ str(temp.path))
-            
 
     # __init__ function for class tkinterApp
     def __init__(self, *args, **kwargs):
@@ -79,16 +48,10 @@ class tkinterApp(tk.Tk):
   
         # initializing frames to an empty array
         self.frames = {} 
-        # iterating through a tuple consisting
-        # of the different page layouts
+        # iterating through a tuple consisting of the different page layouts
         for F in (StartPage, InstancePlanningPage, StochasticPolicyPage, StochasticConstraintsBasedPolicy, RunTimePage, ServiceStatePage):
-       
-            
             frame = F(container, self)
             
-            # initializing frame of that object from
-            # startpage, page1, page2 respectively with
-            # for loop
             self.frames[F] = frame
             frame.grid(row = 0, column = 0, sticky ="nsew")
         
@@ -106,110 +69,130 @@ class tkinterApp(tk.Tk):
     def getFrame(self, cont):
         return self.frames[cont]
     
+
     def show_mainPage(self):
         frame = self.frames[StartPage] 
         frame.tkraise()
+    
+    
     def show_testPage(self):
         frame = self.frames[ServiceStatePage] 
         frame.tkraise()
     
+
     def getMatrix(self):
         return self.matrix
     
+
     def getImage_path(self):
         return self.image_path
     
+
     def getFolder(self):
         return self.folder
+
 
     def getServicesMap(self):
         return self.service_map
 
 
+    #This method check the selected radio button and call showframe function
+    def checkRadio(self, temp, radioStatus ,controller):
+        if radioStatus.get() == 2: #if RunTime RadioButton has been selected 
+            self.show_frame(RunTimePage) #tell show_frame to load runTimePage
+            global config_file
+            config_file = filedialog.askopenfilename(
+                title="Select the config file",
+                initialdir="./config_files"
+            )
+            temp = self.getFrame(RunTimePage)
+            temp.config_file = str(config_file)
+            temp.check_files_config()
+            temp.set_files()
+
+            temp = self.getFrame(ServiceStatePage)
+            temp.config_file = str(config_file)
+            temp.set_image_services()
+            temp.refreshComboBox()
+        else:                      #DesignTime RadioButton has been selected
+            self.show_frame(temp)
+            global file
+            folder = filedialog.askdirectory(
+                title='Select the folder', #name of the tab
+                initialdir="./", #initial shown directory
+            )
+            try:
+                os.mkdir(folder)
+            except:
+                print()
+            temp = self.getFrame(temp) #retrive the frame instance, otherwise it uses the generic class 
+            temp.path = str(folder)
+            temp.refreshListBox(controller)          
 
 
-
-    def loadJson(self):
+    def loadJson(self, mode):
         # Read the JSON file
-        with open('config_layout.json') as json_file:
+        with open(f"config_files/config_layout_{mode}.json") as json_file:
             data = json.load(json_file)
-    
     
         # JSON attributes loading
         services = data['services']
-        self.image_path = data['image_path']
+        self.image_path = f"utils/{data['image_path']}"
         self.folder = data['folder']
         
         self.matrix = [data['matrix'][key] for key in ['rows', 'columns']]
 
-        print( "this is the matrix: ")
+        print("this is the matrix: ")
         print(self.matrix)
-       
 
         # Iterate over the services and extract relevant information
         for service in services:
-            
             nome_file = service['nome_file']
             x=  service['x']
             y = service['y']
             label = service['label']
-            # Create a """map""" to store the service information
-            #self.service_map[nome_file] = (x,y,label)    #use this one OR the one below
 
             #ALTERNATIVE SERVICE MAP KEY_VALUE PAIR
             self.service_map[label] = (x,y,nome_file)
 
 
-        # Print the collection of services DEBUG
-        #print(self.service_map)
-        
-
-
 # first window frame startpage  --START PAGE--
-  
 class StartPage(tk.Frame):
     def __init__(self, parent, controller : tkinterApp):
-
         
         tk.Frame.__init__(self, parent)
         self.grid_columnconfigure(0, weight=1)
         self.option_add("*Font","aerial") #change font size 
         style = ttk.Style()
         style.configure('CustomButton.TButton', font=('Arial', 18)) 
-        controller.loadJson()
+        #controller.loadJson("lmdp_ltlf") # this need to be called when I run the run-time!
     
-        # label of frame Layout 2
+        # label of frame
         label = ttk.Label(self, text ="Adaptive 0.2", font = LARGEFONT)
-         
-        # putting the grid in its place by using
-        # grid
         label.grid(row = 0, column =0, padx = 10, pady = 10)
   
+        # button planning
         button1 = ttk.Button(self, text ="Instance planning",
-        command = lambda : controller.checkRadio(InstancePlanningPage,selected_value, controller),
-        style='CustomButton.TButton',
-        width= 30
+            command = lambda : controller.checkRadio(InstancePlanningPage, selected_value, controller),
+            style='CustomButton.TButton',
+            width= 30
         )
-        #print(str(button1.winfo_reqwidth()))
-        # putting the button in its place by
-        # using grid
         button1.grid(row = 1, column = 0, padx = 10, pady = 10)
   
-        ## button to show frame 2 with text layout2
+        # button stochastic policy
         button2 = ttk.Button(self, text ="Stochastic policy",
-        command = lambda : controller.checkRadio(StochasticPolicyPage,selected_value, controller),
-        style='CustomButton.TButton',
-        width= 30)
-     
-        # putting the button in its place by
-        # using grid
+            command = lambda : controller.checkRadio(StochasticPolicyPage, selected_value, controller),
+            style='CustomButton.TButton',
+            width= 30
+        )
         button2.grid(row = 2, column = 0, padx = 10, pady = 10)
   
+        # button stochastic constraint-based policy
         button3 = ttk.Button(self, text ="Stochastic constraint-based policy",
-        command = lambda : controller.checkRadio(StochasticConstraintsBasedPolicy,selected_value, controller),
-        style='CustomButton.TButton',
-        width= 30)
-
+            command = lambda : controller.checkRadio(StochasticConstraintsBasedPolicy, selected_value, controller),
+            style='CustomButton.TButton',
+            width= 30
+        )
         button3.grid(row = 3, column = 0, padx = 10, pady = 10)
 
         selected_value = tk.IntVar()
@@ -222,26 +205,16 @@ class StartPage(tk.Frame):
             style= 'TRadiobutton'
         )  
         designTime.grid(row = 4, column = 0, padx = 5)
-        
-        designTime.invoke() #highlights the first radio button, without it there would be the two buttons blank
+        designTime.invoke() # highlights the first radio button, without it there would be the two buttons blank
 
         runTime = ttk.Radiobutton(
             self,
             text='Run Time',
             value=2, #Value 2 is related to runtime
             variable=selected_value,
-            
+            style= 'TRadiobutton'
         )
         runTime.grid(row = 5, column = 0, padx = 5)
-    
-
-        label1 = ttk.Label(self, textvariable = selected_value)
-        
-        #label1.grid(row = 6, column = 1) debug test, not mandatory so for now it's not placed in the frame
-
-        button4 = ttk.Button(self, text ="paginaTest", # paginaTest is a class written in another file, used just for testing outer invocation (not working...)
-        command = lambda : controller.show_frame(ServiceStatePage))
-        #button4.grid(row=7, column = 1) #not placed for now, button4 is indeed debug stuff
 
         def setLabel(self, labelName):
             label.config(text= labelName)
@@ -250,7 +223,7 @@ class StartPage(tk.Frame):
 
 #this one will be useful for the runtime section
 def loadFile(): #select the file from os explorer and return its directory as string type, PROBABLY NOT USEFUL, BUT I KEEP IT HERE FOR NOW
-    filetypes  = (
+    filetypes = (
         ('text files', '*.txt'), # this is just for debug, eventually will be deleted
         ('service description language', '*.sdl'),
         ('target description language', '*.tdl')
@@ -258,7 +231,7 @@ def loadFile(): #select the file from os explorer and return its directory as st
     global file
     file = filedialog.askopenfilename(
         title='Select the file', #name of the tab
-        initialdir="C:/Users/anton/OneDrive/Documenti/Software Engineering/Fellowship/Adaptive", #initial shown directory
+        initialdir=".", #initial shown directory
         filetypes= filetypes) #filters types of file can be selected
     return file
 
