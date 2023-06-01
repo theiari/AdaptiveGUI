@@ -1,5 +1,5 @@
 {
-  "id": "rotor_builder2_service",
+  "id": "rotor2",
   "attributes": {
     "type": "service",
     "transitions": {
@@ -34,7 +34,7 @@
           {
             "repairing": 1
           },
-          [-20.0, 0.0]
+          [-1.0, 0.0]
         ]
       },
       "repairing": {
@@ -84,7 +84,7 @@
           {
             "repairing": 1
           },
-          [-20.0, 0.0]
+          [-1.0, 0.0]
         ]
       },
       "repairing": {

@@ -28,6 +28,10 @@ class StochasticConstraintsBasedPolicy(tk.Frame):
     
     def emptyListBox(self):
         self.listBox.delete(0, END) #this ensures that the listbox will be empty every time the frame is loaded, before choosing the new directory
+
+
+
+
     def __init__(self, parent, controller):
         
         

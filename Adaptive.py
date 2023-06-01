@@ -13,11 +13,7 @@ import os
 import tkinter.font as font
 import json
 import tkinter as tk
-
-
-#import TestPage
-
-LARGEFONT =("Verdana", 28)
+from constants import *
 
 
 class tkinterApp(tk.Tk):
@@ -178,7 +174,7 @@ class StartPage(tk.Frame):
         self.grid_columnconfigure(0, weight=1)
         self.option_add("*Font","aerial") #change font size 
         style = ttk.Style()
-        style.configure('CustomButton.TButton', font=('Arial', 18)) 
+        style.configure('CustomButton.TButton', font=MEDIUMFONT) 
     
         # label of frame
         label = ttk.Label(self, text ="Adaptive 0.2", font = LARGEFONT)
@@ -209,7 +205,7 @@ class StartPage(tk.Frame):
         button3.grid(row = 3, column = 0, padx = 10, pady = 10)
 
         selected_value = tk.IntVar()
-        style.configure('TRadiobutton', font=('Arial', 21)) 
+        style.configure('TRadiobutton', font=MEDIUMFONT)
         designTime = ttk.Radiobutton(
             self,
             text='Design Time',

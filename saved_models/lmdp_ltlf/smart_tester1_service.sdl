@@ -1,5 +1,5 @@
 {
-  "id": "smart_tester1_service",
+  "id": "smart_tester1",
   "attributes": {
     "type": "service",
     "transitions": {

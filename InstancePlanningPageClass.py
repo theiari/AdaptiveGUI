@@ -4,8 +4,7 @@ import os
 from tkinter import END
 from tkinter import messagebox as msgbox
 from tkinter import filedialog
-
-LARGEFONT = ("Verdana", 24)
+from constants import *
 
 
 class InstancePlanningPage(tk.Frame):
@@ -34,7 +33,7 @@ class InstancePlanningPage(tk.Frame):
         self.controller = controller
         self.grid_columnconfigure(0, weight=1)
         style = ttk.Style()
-        style.configure('CustomButton.TButton', font=('Arial', 19)) 
+        style.configure('CustomButton.TButton', font=MEDIUMFONT) 
 
         sdl_list = [file for file in os.listdir("./templates") if file.endswith(".sdl")]
         tdl_list = [file for file in os.listdir("./templates") if file.endswith(".tdl")]
@@ -99,7 +98,7 @@ class InstancePlanningPage(tk.Frame):
                 info_window.grab_set()
                 info_window.title("Save the model")
                 info_window.geometry("600x120")
-                info_label = tk.Label(info_window, text="Please, select a name for the file", font= ('arial',18) )
+                info_label = tk.Label(info_window, text="Please, select a name for the file", font= SMALLFONT )
                 info_label.grid(row=0, column=0)
                 boolean = tk.IntVar()
                 radioButtonSDL = ttk.Radiobutton(
@@ -188,7 +187,7 @@ class InstancePlanningPage(tk.Frame):
         label = ttk.Label(centerFrame, text ="Instance Planning Design Time", font = LARGEFONT)
         label.grid(row = 0, column = 0)
 
-        self.listBox = tk.Listbox(rightFrame, width= 30, height= 25, font= ('arial',14))
+        self.listBox = tk.Listbox(rightFrame, width= 30, height= 25, font= SMALLFONT)
         self.listBox.grid(row= 0, column= 0)
 
         startPageButton = ttk.Button(bottomFrame, text ="Home", command = goHome , style= 'CustomButton.TButton')   

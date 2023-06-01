@@ -1,5 +1,5 @@
 {
-  "id": "assembler2_service",
+  "id": "assembler2",
   "attributes": {
     "type": "service",
     "transitions": {

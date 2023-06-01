@@ -1,5 +1,5 @@
 {
-  "id": "stator_builder_service",
+  "id": "stator",
   "attributes": {
     "type": "service",
     "transitions": {

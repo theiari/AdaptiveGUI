@@ -1,5 +1,5 @@
 {
-  "id": "mechanical_engineer_service",
+  "id": "mechanical_engineer",
   "attributes": {
     "type": "service",
     "transitions": {

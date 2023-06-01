@@ -1,5 +1,5 @@
 {
-  "id": "painter2_service",
+  "id": "painter2",
   "attributes": {
     "type": "service",
     "transitions": {
