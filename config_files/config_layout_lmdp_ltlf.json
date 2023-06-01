@@ -1,6 +1,6 @@
 {
 	"image_path": "factory_layout.jpg",
-	"folder": "saved_models",
+	"folder": "saved_models/lmdp_ltlf",
 	"target_file": "target.tdl",
 	"matrix": {
 		"rows": 6,

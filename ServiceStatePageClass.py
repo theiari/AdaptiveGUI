@@ -14,6 +14,8 @@ class ServiceStatePage(tk.Frame):
     global background_image
     labels = [] # boxes corresonds to a collection of labels, each one inside a frame
     service_map = {}
+    service_map_rectangle = {}
+    background_canvas = None
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -26,9 +28,8 @@ class ServiceStatePage(tk.Frame):
 
         def disruptionHandler():
             highlighted_value = self.comboBox.get() #return the selected value
-            temp : tk.Label
-            temp = self.labels[int(highlighted_value) -1]
-            temp.config(background= "red")
+            print(highlighted_value)
+            self.change_rect_red(highlighted_value)
 
         self.grid_columnconfigure(0, weight=0)
         self.rightFrame = tk.Frame(self, width= 400, height= 100)
@@ -105,8 +106,10 @@ class ServiceStatePage(tk.Frame):
         data = list(self.service_map.keys())
 
         self.background_image = ImageTk.PhotoImage(Image.open(self.image_path).resize((1200,900)))
-        self.background_image_label = tk.Label(self.backgroundFrame, image= self.background_image)
-        self.background_image_label.pack()
+        #self.background_image_label = tk.Label(self.backgroundFrame, image= self.background_image)
+        self.background_canvas = tk.Canvas(self.backgroundFrame, width=1200, height=900)
+        self.background_canvas.create_image(0,0, anchor=tk.NW, image=self.background_image)
+        self.background_canvas.pack()
 
         num_elements = self.matrix[0] * self.matrix[1]
 
@@ -116,14 +119,21 @@ class ServiceStatePage(tk.Frame):
         covered_indexes = []
         j = 0
         
-        for i in range(num_elements):  # Create required number of boxes based on matrix dimensions
-            frame = tk.Frame(self.background_image_label, width=120, height=120, borderwidth=1, relief="raised", padx= 5 , pady= 35)
-            frame.grid(row=i // self.matrix[1], column=i % self.matrix[1])  # Adjust the column value to change the number of columns
-            frames.append(frame)
-            label = tk.Label(frame,text= '')
-            label.pack()
-            self.labels.append(label)
+        step_x = 1200 / self.matrix[1]
+        step_y = 900 / self.matrix[0]
+        
+        for service_label in self.service_map.keys():
+            print("service label: " + service_label)
+            y = self.service_map[service_label][0]
+            x = self.service_map[service_label][1]
+            x1 = x * step_x
+            y1 = y * step_y
+            rectangle = self.background_canvas.create_rectangle(x1, y1, x1+step_x, y1+step_y, fill="green", stipple="gray50", outline="black")
+            self.background_canvas.create_text(x1+step_x/2, y1+step_y/2, text=service_label, font=("Arial", 10))
+            self.service_map_rectangle[service_label] = rectangle
+            
 
+        '''
         for position in positions:
             index = position[0] * self.matrix[1] + position[1]  # Calculate the corresponding index for the frame
 
@@ -138,6 +148,7 @@ class ServiceStatePage(tk.Frame):
                 
             label.pack() 
             j= j+1
+        '''
 
 
     def refreshComboBox(self): #very ugly way to update items in the listbox
@@ -147,3 +158,10 @@ class ServiceStatePage(tk.Frame):
         self.comboBox.current(0) #load the first file, instead of showin a blank selection
         #for file in data:
         #    self.listBox.insert(END,str(file))
+        
+    
+    def change_rect_red(self, service_label):
+        self.background_canvas.itemconfig(self.service_map_rectangle[service_label], fill="red", stipple="gray25", outline="black")
+        
+    def change_rect_orange(self, service_label):
+        self.background_canvas.itemconfig(self.service_map_rectangle[service_label], fill="orange", stipple="gray25", outline="black")

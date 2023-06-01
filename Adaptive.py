@@ -71,7 +71,7 @@ class tkinterApp(tk.Tk):
     
 
     def show_mainPage(self):
-        frame = self.frames[StartPage] 
+        frame = self.frames[StartPage]
         frame.tkraise()
     
     
@@ -105,9 +105,20 @@ class tkinterApp(tk.Tk):
                 title="Select the config file",
                 initialdir="./config_files"
             )
+            if not config_file:
+                msgbox.showerror("Error", "Please select a file")
+                self.show_frame(RunTimePage)
+                return
+            config_json = json.load(open(config_file))
+            folder = config_json['folder']
+            if not os.path.isdir(folder):
+                msgbox.showerror("Error", "The folder specified in the config file does not exist")
+                controller.show_mainPage()
+                return
+            
             temp = self.getFrame(RunTimePage)
             temp.config_file = str(config_file)
-            temp.check_files_config()
+            #temp.check_files_config()
             temp.set_files()
 
             temp = self.getFrame(ServiceStatePage)
@@ -121,6 +132,9 @@ class tkinterApp(tk.Tk):
                 title='Select the folder', #name of the tab
                 initialdir="./", #initial shown directory
             )
+            if not folder:
+                msgbox.showerror("Error", "Please select a folder")
+                return
             try:
                 os.mkdir(folder)
             except:
@@ -165,7 +179,6 @@ class StartPage(tk.Frame):
         self.option_add("*Font","aerial") #change font size 
         style = ttk.Style()
         style.configure('CustomButton.TButton', font=('Arial', 18)) 
-        #controller.loadJson("lmdp_ltlf") # this need to be called when I run the run-time!
     
         # label of frame
         label = ttk.Label(self, text ="Adaptive 0.2", font = LARGEFONT)
